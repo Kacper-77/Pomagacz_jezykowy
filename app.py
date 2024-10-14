@@ -16,7 +16,7 @@ class Translation(BaseModel):
 
 
 # Funkcja do tłumaczenia tekstu za pomocą Ai
-def translate_text_with_openai(api_key, text, src_lang, dest_lang):  
+def translate_text_with_openai(api_key, text, src_lang, dest_lang):
     openai.api_key = api_key
     response = openai.chat.completions.create(
         model="gpt-4",
@@ -26,7 +26,6 @@ def translate_text_with_openai(api_key, text, src_lang, dest_lang):
         ],
         max_tokens=500
     )
-
     translated_text = response.choices[0].message.content.strip()
     return Translation(translated_text=translated_text, language=dest_lang)
 
@@ -65,14 +64,12 @@ def analyze_user_text(api_key, user_text):
     messages = [
         {"role": "system", "content": "Znasz wszystkie języki świata i jesteś ekspertem od gramatyki, składni i poprawności językowej."},
         {"role": "user", "content": f"Sprawdź poniższy tekst pod kątem błędów gramatycznych, składniowych oraz udziel sugestii. Oto tekst: {user_text}"}
-    ]  
-     
+    ]      
     response = openai.chat.completions.create(
         model="gpt-4",
         messages=messages,
         max_tokens=300
     )  
-
     feedback = response.choices[0].message.content.strip()
     return feedback
 
@@ -143,10 +140,10 @@ def main():
         "Arabski 🇸🇦": "ar",
         "Japoński 🇯🇵": "ja"
     }
-    st.header(":blue[Pomagacz językowy] 🤓")    
-    with st.sidebar:
+    with st.sidebar:    
         # Słówka do zapamiętania
         st.subheader("Słówka do zapamiętania 📝")       
+        # Formularz dodawania nowego słowa
         col1, col2, col3 = st.columns(3)
         with col1:
             new_word = st.text_input("Nowe słowo", key="new_word_input")
@@ -173,16 +170,17 @@ def main():
                 st.success(f"'{word}' zostało usunięte.")
                 st.rerun()
 
-        # Historia tłumaczeń
         st.header(":red[Historia tłumaczeń]")       
+        # Historia tłumaczeń
         history = get_translation_history()
-        for idx, translation in enumerate(history):
+        for translation in history:
             original_text, translated_text, src_lang, dest_lang = translation[1], translation[2], translation[3], translation[4]
             st.write(f"{original_text} -> {translated_text} ({src_lang} -> {dest_lang})")
-            if st.button(f"Usuń {original_text} -> {translated_text}", key=f"delete_{translation[0]}_{idx}"):
+            if st.button(f"Usuń {original_text} -> {translated_text}", key=translation[0]):
                 delete_translation(translation[0])
                 st.rerun()
 
+    st.header(":blue[Pomagacz językowy] 🤓")
     # Zakładki i kolumny
     tab1, tab2 = st.tabs(["Tłumaczenie", "Interaktywne Ćwiczenia"])
 
@@ -195,6 +193,14 @@ def main():
         st.session_state.grammar_tips = ""
 
     with tab1:
+        with st.expander("Informacje dotyczące korzystania z aplikacji"):
+            st.markdown("## Witaj, niezmiernie nam miło, że zdecydowaleś/aś się skorzystać z naszej aplikacji 🥰")
+            st.markdown("## Cenimy sobie ludzi którzy lubią się kształcić oraz rozwijać i dlatego dokładamy wszelkich starań aby umożliwić im korzystanie z jak najlepszych narzędzi.")
+            st.markdown("### Krótka instrukcja obsługi jak korzystać z naszej aplikacji:")
+            st.markdown("#### 1. podaj swój klucz API OpenAI w polu do tego przeznaczonym")
+            st.markdown("#### 2. baw się dobrze podczas nauki z naszą aplikacją")
+            st.markdown("#### Tak, to już naprawdę wszystko jesteśmy przystępni dla każdego 😁")
+
         # Pobranie klucza API OpenAI
         api_key = st.text_input("Wprowadź swój klucz API OpenAI aby móc korzystać z aplikacji:", type="password")
 
@@ -216,7 +222,7 @@ def main():
             else:        
                 translation = translate_text_with_openai(api_key, text, src_lang, dest_lang)
                 st.session_state.translated_text = translation.translated_text
-                
+                               
                 # Zapisywanie tłumaczenia w bazie danych
                 insert_translation(text, st.session_state.translated_text, src_lang, dest_lang)
 
@@ -249,7 +255,6 @@ def main():
 
     with tab2:
         st.header(":red[Sprawdź swoje umiejętności]")
-
         # Generowanie losowych słów i odzew AI
         dest_lang = st.selectbox("Wybierz język docelowy", list(lang_mapping3.keys()))
 
@@ -276,21 +281,20 @@ def main():
                 st.warning("Proszę wprowadzić zdanie.")
 
         # Konwersacje z chatbotem
-        st.subheader("Asystent językowy 🤖")
-        if api_key:
-            user_input = st.text_input("Wprowadź wiadomość do chatbota:", key="chatbot_input")
-            if user_input and st.button("Wyślij"):
-                conversation_messages = [
-                    {"role": "system", "content": "Jesteś ekspertem do spraw językowych znasz wszystkie języki świata i udzielasz kompleksowych porad oraz odpowiedzi na pytania użytkownika"},
-                    {"role": "user", "content": user_input}
-                ]
-                response = openai.chat.completions.create(
-                    model="gpt-4",
-                    messages=conversation_messages,
-                    max_tokens=300
-                )
-                chatbot_reply = response.choices[0].message.content.strip()
-                st.write(chatbot_reply)
+        st.subheader("Asystent językowy 🤖")    
+        user_input = st.text_input("Wprowadź wiadomość do chatbota:", key="chatbot_input")
+        if user_input and st.button("Wyślij"):
+            conversation_messages = [
+                {"role": "system", "content": "Jesteś ekspertem do spraw językowych znasz wszystkie języki świata i udzielasz kompleksowych porad oraz odpowiedzi na pytania użytkownika"},
+                {"role": "user", "content": user_input}
+            ]
+            response = openai.chat.completions.create(
+                model="gpt-4",
+                messages=conversation_messages,
+                max_tokens=300
+            )
+            chatbot_reply = response.choices[0].message.content.strip()
+            st.write(chatbot_reply)
 
 
 # Uruchomienie aplikacji
