@@ -272,8 +272,11 @@ def main():
         st.write(", ".join(st.session_state.random_words))
         
         if st.button("Losuj 🎲"):
-            # Losowanie nowych słów
-            st.session_state.random_words = generate_random_words(dest_lang)           
+            # Losowe słowa
+            if api_key:
+                st.session_state.random_words = generate_random_words(dest_lang)
+            else:
+                st.info("Najpierw wprowadź klucz API")
 
         user_sentence = st.text_input("Twoje zdanie:", key="user_sentence_input")
 
@@ -289,18 +292,21 @@ def main():
         # Konwersacje z chatbotem
         st.subheader("Asystent językowy 🤖")    
         user_input = st.text_input("Wprowadź wiadomość do chatbota:", key="chatbot_input")
-        if user_input and st.button("Wyślij"):
-            conversation_messages = [
-                {"role": "system", "content": "Jesteś ekspertem do spraw językowych znasz wszystkie języki świata i udzielasz kompleksowych porad oraz odpowiedzi na pytania użytkownika"},
-                {"role": "user", "content": user_input}
-            ]
-            response = openai.chat.completions.create(
-                model="gpt-4",
-                messages=conversation_messages,
-                max_tokens=300
-            )
-            chatbot_reply = response.choices[0].message.content.strip()
-            st.write(chatbot_reply)
+        if api_key:
+            if user_input and st.button("Wyślij"):
+                conversation_messages = [
+                    {"role": "system", "content": "Jesteś ekspertem do spraw językowych znasz wszystkie języki świata i udzielasz kompleksowych porad oraz odpowiedzi na pytania użytkownika"},
+                    {"role": "user", "content": user_input}
+                ]
+                response = openai.chat.completions.create(
+                    model="gpt-4",
+                    messages=conversation_messages,
+                    max_tokens=300
+                )
+                chatbot_reply = response.choices[0].message.content.strip()
+                st.write(chatbot_reply)
+        else:
+            st.info("Najpierw wprowadź klucz API")
 
 
 # Uruchomienie aplikacji
