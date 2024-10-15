@@ -60,18 +60,21 @@ def get_grammar_tips(api_key, src_text, translated_text, src_lang, dest_lang):
 
 # Funkcja do sprawdzania umiejętności użytkownika
 def analyze_user_text(api_key, user_text):
-    openai.api_key = api_key
-    messages = [
-        {"role": "system", "content": "Znasz wszystkie języki świata i jesteś ekspertem od gramatyki, składni i poprawności językowej."},
-        {"role": "user", "content": f"Sprawdź poniższy tekst pod kątem błędów gramatycznych, składniowych oraz udziel sugestii. Oto tekst: {user_text}"}
-    ]      
-    response = openai.chat.completions.create(
-        model="gpt-4",
-        messages=messages,
-        max_tokens=300
-    )  
-    feedback = response.choices[0].message.content.strip()
-    return feedback
+    try:
+        openai.api_key = api_key
+        messages = [
+            {"role": "system", "content": "Znasz wszystkie języki świata i jesteś ekspertem od gramatyki, składni i poprawności językowej."},
+            {"role": "user", "content": f"Sprawdź poniższy tekst pod kątem błędów gramatycznych, składniowych oraz udziel sugestii. Oto tekst: {user_text}"}
+        ]      
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=300
+        )  
+        feedback = response.choices[0].message.content.strip()
+        return feedback
+    except openai.AuthenticationError:
+        return None
 
 
 # Funkcja do quizu gramatycznego
@@ -86,15 +89,18 @@ def generate_grammar_quiz(translated_text):
 
 # Funkcja do generowania losowych słów
 def generate_random_words(dest_lang, num_words=3):
-    prompt = f"Wygeneruj {num_words} losowych słów w języku {dest_lang} i je ponumeruj oraz podaj tłumaczenie dla każdego słowa w języku polskim."
-    response = openai.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=50
-    )
-    return response.choices[0].message.content.strip().split(", ")
+    try:
+        prompt = f"Wygeneruj {num_words} losowych słów w języku {dest_lang} i je ponumeruj oraz podaj tłumaczenie dla każdego słowa w języku polskim."
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=50
+        )
+        return response.choices[0].message.content.strip().split(", ")
+    except openai.OpenAIError:
+        return []      
 
 
 # Główna część aplikacji
@@ -264,10 +270,10 @@ def main():
 
         st.write("Użyj poniższych słów, aby ułożyć sensowne zdanie (:blue[możesz użyć dowolnej formy tych słów i nie musisz używać wszystkich]):")
         st.write(", ".join(st.session_state.random_words))
-
+        
         if st.button("Losuj 🎲"):
             # Losowanie nowych słów
-            st.session_state.random_words = generate_random_words(dest_lang)
+            st.session_state.random_words = generate_random_words(dest_lang)           
 
         user_sentence = st.text_input("Twoje zdanie:", key="user_sentence_input")
 
