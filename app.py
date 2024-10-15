@@ -222,7 +222,7 @@ def main():
             else:        
                 translation = translate_text_with_openai(api_key, text, src_lang, dest_lang)
                 st.session_state.translated_text = translation.translated_text
-                               
+                              
                 # Zapisywanie tłumaczenia w bazie danych
                 insert_translation(text, st.session_state.translated_text, src_lang, dest_lang)
 
