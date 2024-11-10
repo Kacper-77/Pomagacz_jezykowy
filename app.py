@@ -3,6 +3,8 @@ import openai
 from pydantic import BaseModel
 import random
 from io import BytesIO
+from langfuse.decorators import observe
+from dotenv import load_dotenv
 from db import *
 
 # Ustawienia Streamlit
@@ -15,7 +17,11 @@ class Translation(BaseModel):
     language: str
 
 
-# Funkcja do tłumaczenia tekstu za pomocą Ai
+load_dotenv()
+
+
+@observe
+# Funkcja do tłumaczenia tekstu za pomocą AI
 def translate_text_with_openai(api_key, text, src_lang, dest_lang):
     openai.api_key = api_key
     response = openai.chat.completions.create(
@@ -43,6 +49,7 @@ def text_to_speech_tts1(text):
     return audio
 
 
+@observe
 # Funkcja do uzyskiwania wskazówek gramatycznych od AI
 def get_grammar_tips(api_key, src_text, translated_text, src_lang, dest_lang):
     openai.api_key = api_key
@@ -58,6 +65,7 @@ def get_grammar_tips(api_key, src_text, translated_text, src_lang, dest_lang):
     return response.choices[0].message.content.strip()
 
 
+@observe
 # Funkcja do sprawdzania umiejętności użytkownika
 def analyze_user_text(api_key, user_text):
     try:
