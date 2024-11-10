@@ -1,3 +1,4 @@
 translations_words.db
 translations.db
 __pycache__
+.env
