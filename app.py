@@ -260,22 +260,6 @@ def main():
             dest_lang = st.selectbox("Język docelowy", list(lang_mapping2.keys()))
 
         # Tłumaczenie
-
-        ### INFO
-        # st.write("""Jeśli chodzi o tłumaczenie i audio koszty wyglądają w następujący sposób
-        #             tłumaczenie: 'gpt-4o-mini' 0.150 dolara za milion input tokenów oraz 0.600 doloara za milion output tokenów
-        #             co to oznacza? Otóż tutaj został użyty tani aczkolwiek wystarczający i bardzo szybki model.
-        #             Input tokeny to ciągi znaków/sylaby ktore AI sobie nalicza w swój sposób.
-        #             Jedno krótkie słowo to 1-1.5 tokena. Ceny są w tym przypadku bardzo przystępne.""")
-        # st.write("""
-        #             Jeśli zaś chodzi o audio wygląda to tak: 'tts-1' 15.000 dolarów za milion znaków (milion znaków nie tokenów)
-        #             Cena w tym przypadku jest również przystępna i możliwe jest dobranie
-        #             sobie różnych głosów w zależności od gustu.""")
-        
-        # st.write("""Poniżej tam gdzie znajdują się wskazówki gramatyczne został również użyty model gpt-4o-mini
-        #          tak samo jak przy tłumaczeniu. Quiz gramatyczny jest darmowy z możliwością rozwoju jest to swego
-        #          rodzaju eksperyment.""")
-
         text = st.text_area("Wprowadź tekst do przetłumaczenia", max_chars=300)
         column1, column2, _ = st.columns([1, 1, 5])
         with column1:
@@ -336,23 +320,6 @@ def main():
                         st.write(q)
 
     with tab2:
-
-        # ### INFO
-        # st.write("""Tutaj AI zostało wykorzystane do generownia losowych słow oraz oceny tekstu
-        #          użytkownika jeśli chodzi o ocenę tekstu to ponownie został użyty szybki i skuteczny
-        #          model 'gpt-4o-mini' także ceny bez zmian. W tym miejscu można dodać jeszcze strumieniowanie
-        #          tekstu na żywo tak jak w przypadku wskazówek gramatycznych.
-        #          """)
-        
-        # st.write("""Odnośnie generowania losowych słów tutaj tanie modele nie radziły sobie zbyt dobrze
-        #          i został użyty model 'gpt-4' a jego ceny wyglądają w następujący sposób: 
-        #          30.00 dolarów za milion input tokenów oraz 60.00 dolarów za milion output tokenów. Ceny tu już są zauważalnie wyższe
-        #          aczkolwiek generowane są tylko trzy słowa i input tokenów to tu prawie nie ma więc koszty
-        #          nie powinny być duże. Z biegiem czasu modele będą tanieć i wtedy będzie można eksperymentować.""")
-        
-        # st.write("""Ta część aplikacji ma naprawdę duży potencjał na nawiązanie więzi z użytkownikiem
-        #          i może być stale rozwijana.""")
-
         st.header(":red[Sprawdź swoje umiejętności]")
         # Generowanie losowych słów i odzew AI
         dest_lang = st.selectbox("Wybierz język docelowy", list(lang_mapping3.keys()))
@@ -389,8 +356,6 @@ def main():
         st.subheader(
             "Asystent językowy 🤖"
         )
-        # st.markdown("""Jest to ekspert językowy można się go zapytać w czym może pomóc.
-        #             Tutaj również został użyty model 'gpt-4o-mini'.""")
         user_input = st.text_input(
             "Wprowadź wiadomość do chatbota:", key="chatbot_input"
         )
